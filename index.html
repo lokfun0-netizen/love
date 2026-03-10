@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Для моей любви</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Caveat:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Patrick Hand', cursive;
+            background: linear-gradient(135deg, #ffeef8 0%, #ffe0f0 50%, #ffeef8 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Фоновые сердечки по бокам */
+        .hearts-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        
+        .side-hearts-left,
+        .side-hearts-right {
+            position: absolute;
+            top: 0;
+            width: 120px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-evenly;
+            padding: 20px 0;
+        }
+        
+        .side-hearts-left {
+            left: 20px;
+        }
+        
+        .side-hearts-right {
+            right: 20px;
+        }
+        
+        .floating-heart {
+            font-size: 35px;
+            animation: floatHeart 4s ease-in-out infinite;
+            filter: drop-shadow(0 4px 8px rgba(196,30,58,0.3));
+            opacity: 0.9;
+        }
+        
+        .floating-heart:nth-child(1) { animation-delay: 0s; font-size: 40px; }
+        .floating-heart:nth-child(2) { animation-delay: 0.5s; font-size: 30px; }
+        .floating-heart:nth-child(3) { animation-delay: 1s; font-size: 45px; }
+        .floating-heart:nth-child(4) { animation-delay: 1.5s; font-size: 35px; }
+        .floating-heart:nth-child(5) { animation-delay: 2s; font-size: 50px; }
+        .floating-heart:nth-child(6) { animation-delay: 2.5s; font-size: 32px; }
+        .floating-heart:nth-child(7) { animation-delay: 3s; font-size: 42px; }
+        .floating-heart:nth-child(8) { animation-delay: 3.5s; font-size: 28px; }
+        
+        @keyframes floatHeart {
+            0%, 100% { 
+                transform: translateY(0) rotate(0deg) scale(1); 
+                opacity: 0.9;
+            }
+            25% { 
+                transform: translateY(-15px) rotate(5deg) scale(1.1); 
+                opacity: 1;
+            }
+            50% { 
+                transform: translateY(-25px) rotate(0deg) scale(1); 
+                opacity: 0.95;
+            }
+            75% { 
+                transform: translateY(-10px) rotate(-5deg) scale(1.05); 
+                opacity: 1;
+            }
+        }
+        
+        /* Дополнительные плавающие сердечки на фоне */
+        .bg-heart {
+            position: absolute;
+            font-size: 60px;
+            opacity: 0.15;
+            animation: bgFloat 8s ease-in-out infinite;
+        }
+        
+        .bg-heart:nth-child(3) { top: 10%; left: 15%; animation-delay: 0s; }
+        .bg-heart:nth-child(4) { top: 30%; right: 10%; animation-delay: 2s; }
+        .bg-heart:nth-child(5) { top: 60%; left: 8%; animation-delay: 4s; }
+        .bg-heart:nth-child(6) { top: 80%; right: 12%; animation-delay: 6s; }
+        .bg-heart:nth-child(7) { top: 45%; left: 5%; animation-delay: 1s; }
+        .bg-heart:nth-child(8) { top: 70%; right: 8%; animation-delay: 3s; }
+        
+        @keyframes bgFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.15; }
+            50% { transform: translateY(-30px) rotate(10deg); opacity: 0.25; }
+        }
+        
+        .container {
+            width: 85%;
+            max-width: 700px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 
+                0 20px 60px rgba(196,30,58,0.15),
+                0 0 0 1px rgba(255,255,255,0.5) inset;
+            position: relative;
+            z-index: 10;
+            min-height: 500px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(196,30,58,0.1);
+        }
+        
+        /* Paper texture effect */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(196,30,58,0.02) 2px,
+                    rgba(196,30,58,0.02) 4px
+                );
+            border-radius: 25px;
+            pointer-events: none;
+        }
+        
+        .page {
+            display: none;
+            animation: fadeIn 0.6s ease;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Page 1 - Welcome */
+        .welcome-page {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        
+        /* Красивый красный смайлик с анимацией */
+        .cute-character {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .cute-character::before {
+            content: '😍';
+            font-size: 90px;
+            filter: drop-shadow(0 8px 20px rgba(196,30,58,0.4));
+            animation: mainPulse 2s ease-in-out infinite;
+            display: block;
+        }
+        
+        @keyframes mainPulse {
+            0%, 100% { 
+                transform: scale(1); 
+                filter: drop-shadow(0 8px 20px rgba(196,30,58,0.4));
+            }
+            50% { 
+                transform: scale(1.1); 
+                filter: drop-shadow(0 12px 30px rgba(196,30,58,0.6));
+            }
+        }
+        
+        /* Декоративные сердечки вокруг смайлика */
+        .cute-character .mini-heart {
+            position: absolute;
+            font-size: 30px;
+            animation: miniFloat 2.5s ease-in-out infinite;
+        }
+        
+        .mini-heart:nth-child(1) { top: 0; left: 0; animation-delay: 0s; }
+        .mini-heart:nth-child(2) { top: 10px; right: 5px; animation-delay: 0.5s; }
+        .mini-heart:nth-child(3) { bottom: 10px; left: 5px; animation-delay: 1s; }
+        .mini-heart:nth-child(4) { bottom: 0; right: 0; animation-delay: 1.5s; }
+        
+        @keyframes miniFloat {
+            0%, 100% { transform: translateY(0) scale(1); opacity: 0.8; }
+            50% { transform: translateY(-10px) scale(1.2); opacity: 1; }
+        }
+        
+        /* Грустный смайлик для второй страницы */
+        .cute-character.sad::before {
+            content: '🥺';
+            font-size: 90px;
+            filter: drop-shadow(0 8px 20px rgba(100,100,100,0.3));
+            animation: sadShake 0.8s ease-in-out infinite;
+        }
+        
+        @keyframes sadShake {
+            0%, 100% { transform: rotate(0deg) translateX(0); }
+            25% { transform: rotate(-8deg) translateX(-5px); }
+            75% { transform: rotate(8deg) translateX(5px); }
+        }
+        
+        .cute-character.sad .mini-heart {
+            display: none;
+        }
+        
+        h1 {
+            font-family: 'Caveat', cursive;
+            font-size: 3.5em;
+            color: #4a4a4a;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        h1 span {
+            color: #c41e3a;
+            display: block;
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+        
+        .subtitle {
+            color: #8b4513;
+            font-size: 1.3em;
+            margin-bottom: 40px;
+            font-weight: bold;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 25px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 18px 45px;
+            border: 3px solid #c41e3a;
+            background: transparent;
+            color: #c41e3a;
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1.2em;
+            border-radius: 35px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(196,30,58,0.2);
+        }
+        
+        .btn:hover {
+            background: #c41e3a;
+            color: white;
+            transform: scale(1.08) translateY(-3px);
+            box-shadow: 0 8px 25px rgba(196,30,58,0.4);
+        }
+        
+        .btn-outline {
+            border-color: #999;
+            color: #666;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .btn-outline:hover {
+            background: #999;
+            color: white;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        
+        /* Page 2 - Try Again */
+        .tryagain-page {
+            text-align: center;
+            padding: 80px 20px;
+        }
+        
+        .tryagain-page h2 {
+            font-family: 'Caveat', cursive;
+            font-size: 3em;
+            color: #c41e3a;
+            margin-bottom: 30px;
+            transform: rotate(-2deg);
+            text-shadow: 3px 3px 6px rgba(196,30,58,0.2);
+        }
+        
+        /* Page 3 - Menu */
+        .menu-page {
+            text-align: center;
+        }
+        
+        .menu-title {
+            font-family: 'Caveat', cursive;
+            font-size: 2.8em;
+            color: #c41e3a;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 2px 2px 4px rgba(196,30,58,0.2);
+        }
+        
+        .menu-subtitle {
+            color: #8b4513;
+            margin-bottom: 40px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .menu-item {
+            aspect-ratio: 1;
+            border: 3px solid #c41e3a;
+            border-radius: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            background: #fff;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(196,30,58,0.15);
+        }
+        
+        .menu-item:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 15px 40px rgba(196,30,58,0.25);
+            border-color: #ff6b9d;
+        }
+        
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border: 2px solid #c41e3a;
+            border-radius: 20px;
+            opacity: 0.3;
+        }
+        
+        .menu-icon {
+            font-size: 65px;
+            margin-bottom: 10px;
+            transition: transform 0.3s ease;
+        }
+        
+        .menu-item:hover .menu-icon {
+            transform: scale(1.2);
+        }
+        
+        /* Page 4 - Photos */
+        .photos-page {
+            padding: 20px;
+        }
+        
+        .photos-collage {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .photo-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transform: rotate(var(--rotation, 0deg));
+            transition: transform 0.3s ease;
+        }
+        
+        .photo-wrapper:hover {
+            transform: rotate(0deg) scale(1.05);
+            z-index: 100;
+        }
+        
+        .photo-item {
+            aspect-ratio: 3/4;
+            background: #fff;
+            border: 10px solid #fff;
+            border-radius: 15px;
+            position: relative;
+            box-shadow: 
+                0 0 0 3px #c41e3a,
+                0 0 0 6px #fff,
+                0 0 0 9px #8b4513,
+                0 15px 35px rgba(0,0,0,0.2);
+            overflow: hidden;
+            transition: all 0.4s ease;
+            width: 100%;
+        }
+        
+        .photo-item:hover {
+            box-shadow: 
+                0 0 0 3px #c41e3a,
+                0 0 0 6px #fff,
+                0 0 0 9px #8b4513,
+                0 25px 50px rgba(196,30,58,0.3);
+        }
+        
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .photo-wrapper:nth-child(1) { --rotation: -5deg; }
+        .photo-wrapper:nth-child(2) { --rotation: 3deg; }
+        .photo-wrapper:nth-child(3) { --rotation: -2deg; }
+        .photo-wrapper:nth-child(4) { --rotation: 4deg; }
+        .photo-wrapper:nth-child(5) { --rotation: -3deg; }
+        .photo-wrapper:nth-child(6) { --rotation: 2deg; }
+        
+        .photo-label {
+            margin-top: 20px;
+            font-size: 1em;
+            color: #8b4513;
+            white-space: nowrap;
+            background: #fff;
+            padding: 10px 18px;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(196,30,58,0.2);
+            border: 2px solid #c41e3a;
+            font-weight: bold;
+            z-index: 20;
+        }
+        
+        .photo-label::before {
+            content: '✎ ';
+            margin-right: 5px;
+            color: #c41e3a;
+        }
+        
+        .section-title {
+            font-family: 'Caveat', cursive;
+            font-size: 2.8em;
+            color: #c41e3a;
+            text-align: center;
+            margin-top: 40px;
+            text-shadow: 2px 2px 4px rgba(196,30,58,0.2);
+        }
+        
+        /* Page 5 - Flowers Photo */
+        .flowers-page {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .flower-photo-container {
+            max-width: 450px;
+            margin: 0 auto 30px;
+            position: relative;
+        }
+        
+        .flower-frame {
+            background: #fff;
+            border: 15px solid #fff;
+            border-radius: 20px;
+            box-shadow: 
+                0 0 0 4px #c41e3a,
+                0 0 0 8px #fff,
+                0 0 0 12px #8b4513,
+                0 20px 50px rgba(196,30,58,0.25);
+            overflow: hidden;
+            transform: rotate(-2deg);
+            transition: all 0.4s ease;
+        }
+        
+        .flower-frame:hover {
+            transform: rotate(0deg) scale(1.03);
+            box-shadow: 
+                0 0 0 4px #c41e3a,
+                0 0 0 8px #fff,
+                0 0 0 12px #8b4513,
+                0 30px 60px rgba(196,30,58,0.35);
+        }
+        
+        .flower-frame img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .flower-label-box {
+            margin-top: 35px;
+        }
+        
+        .flower-label-box h3 {
+            font-family: 'Caveat', cursive;
+            font-size: 3em;
+            color: #c41e3a;
+            text-transform: uppercase;
+            text-shadow: 3px 3px 6px rgba(196,30,58,0.2);
+        }
+        
+        .flower-label-box p {
+            color: #8b4513;
+            font-size: 1.3em;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        
+        .messages-around {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 35px;
+        }
+        
+        .msg-bubble {
+            background: #fff;
+            border: 3px solid #c41e3a;
+            border-radius: 25px;
+            padding: 18px;
+            font-size: 0.95em;
+            color: #666;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(196,30,58,0.1);
+        }
+        
+        .msg-bubble:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(196,30,58,0.2);
+        }
+        
+        /* Page 6 - Video */
+        .video-page {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .video-header {
+            font-size: 1.6em;
+            color: #4a4a4a;
+            margin-bottom: 25px;
+        }
+        
+        .video-header span {
+            color: #c41e3a;
+            font-size: 1.3em;
+        }
+        
+        .video-container {
+            background: #000;
+            border-radius: 25px;
+            overflow: hidden;
+            margin-bottom: 25px;
+            position: relative;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            border: 4px solid #c41e3a;
+        }
+        
+        .video-container video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .video-info {
+            background: linear-gradient(135deg, #c41e3a, #ff6b9d);
+            color: white;
+            padding: 18px 35px;
+            border-radius: 35px;
+            display: inline-block;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            font-weight: bold;
+            box-shadow: 0 5px 20px rgba(196,30,58,0.3);
+        }
+        
+        .secret-msg {
+            background: #8b0000;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1em;
+            display: inline-block;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(139,0,0,0.3);
+        }
+        
+        /* Page 7 - Letter */
+        .letter-page {
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .letter-content {
+            background: #fff;
+            padding: 45px;
+            border-radius: 20px;
+            line-height: 2.2;
+            color: #4a4a4a;
+            font-size: 1.15em;
+            text-align: justify;
+            box-shadow: 0 10px 40px rgba(196,30,58,0.1);
+            border: 2px solid rgba(196,30,58,0.1);
+        }
+        
+        .letter-content h2 {
+            font-family: 'Caveat', cursive;
+            color: #c41e3a;
+            font-size: 2.5em;
+            margin-bottom: 25px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(196,30,58,0.2);
+        }
+        
+        .signature {
+            text-align: right;
+            margin-top: 35px;
+            color: #8b4513;
+            font-weight: bold;
+        }
+        
+        /* Return button */
+        .return-btn {
+            display: inline-block;
+            margin-top: 35px;
+            padding: 15px 40px;
+            border: 3px solid #c41e3a;
+            color: #c41e3a;
+            text-decoration: none;
+            border-radius: 30px;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            background: transparent;
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1.1em;
+            font-weight: bold;
+            box-shadow: 0 5px 20px rgba(196,30,58,0.2);
+        }
+        
+        .return-btn:hover {
+            background: #c41e3a;
+            color: white;
+            transform: scale(1.05) translateY(-3px);
+            box-shadow: 0 10px 30px rgba(196,30,58,0.4);
+        }
+        
+        .bottom-section {
+            text-align: center;
+            margin-top: 45px;
+            padding-top: 35px;
+            border-top: 3px dashed #c41e3a;
+        }
+        
+        .bottom-title {
+            font-family: 'Caveat', cursive;
+            font-size: 3em;
+            color: #c41e3a;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 6px rgba(196,30,58,0.2);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .side-hearts-left,
+            .side-hearts-right {
+                width: 60px;
+            }
+            .floating-heart {
+                font-size: 25px;
+            }
+            .container {
+                width: 75%;
+            }
+            h1 { font-size: 2.8em; }
+            .menu-title { font-size: 2.2em; }
+            .photos-collage { 
+                grid-template-columns: repeat(2, 1fr); 
+                gap: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .side-hearts-left,
+            .side-hearts-right {
+                display: none;
+            }
+            .container {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Фоновые сердечки по бокам -->
+    <div class="hearts-background">
+        <div class="side-hearts-left">
+            <span class="floating-heart">💖</span>
+            <span class="floating-heart">💕</span>
+            <span class="floating-heart">💗</span>
+            <span class="floating-heart">💖</span>
+            <span class="floating-heart">💝</span>
+            <span class="floating-heart">💕</span>
+            <span class="floating-heart">💗</span>
+            <span class="floating-heart">💖</span>
+        </div>
+        <div class="side-hearts-right">
+            <span class="floating-heart">💕</span>
+            <span class="floating-heart">💖</span>
+            <span class="floating-heart">💝</span>
+            <span class="floating-heart">💗</span>
+            <span class="floating-heart">💕</span>
+            <span class="floating-heart">💖</span>
+            <span class="floating-heart">💝</span>
+            <span class="floating-heart">💗</span>
+        </div>
+        <!-- Дополнительные фоновые сердечки -->
+        <span class="bg-heart">💕</span>
+        <span class="bg-heart">💖</span>
+        <span class="bg-heart">💗</span>
+        <span class="bg-heart">💝</span>
+        <span class="bg-heart">💕</span>
+        <span class="bg-heart">💖</span>
+    </div>
+
+    <div class="container">
+        <!-- Page 1: Welcome -->
+        <div class="page welcome-page active" id="page1">
+            <div class="cute-character">
+                <span class="mini-heart">💕</span>
+                <span class="mini-heart">💖</span>
+                <span class="mini-heart">💗</span>
+                <span class="mini-heart">💝</span>
+            </div>
+            <h1>Приветствую <span>Моя любовь</span></h1>
+            <p class="subtitle">Хотите увидеть свой подарок?</p>
+            <div class="buttons">
+                <button class="btn" onclick="showPage('page3')">Yes, please</button>
+                <button class="btn btn-outline" onclick="showPage('page2')">No, thanks</button>
+            </div>
+        </div>
+        
+        <!-- Page 2: Try Again -->
+        <div class="page tryagain-page" id="page2"> 
+            <div class="cute-character sad"></div>
+            <h2>ОБРАТНО!</h2>
+            <button class="btn" onclick="showPage('page1')">К подарку</button>
+        </div>
+        
+        <!-- Page 3: Main Menu -->
+        <div class="page menu-page" id="page3">
+            <h2 class="menu-title">ДЛЯ САМОЙ КРАСИВОЙ ДЕВУШКИ!</h2>
+            <p class="menu-subtitle">ОБОЖАЮ ТЕБЯ, МОЯ ЖИЗНЬ!</p>
+            <div class="menu-grid">
+                <div class="menu-item" onclick="showPage('page4')">
+                    <div class="menu-icon">📸</div>
+                </div>
+                <div class="menu-item" onclick="showPage('page5')">
+                    <div class="menu-icon">💐</div>
+                </div>
+                <div class="menu-item" onclick="showPage('page6')">
+                    <div class="menu-icon">🎥</div>
+                </div>
+                <div class="menu-item" onclick="showPage('page7')">
+                    <div class="menu-icon">💌</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Page 4: Photos -->
+        <div class="page photos-page" id="page4">
+            <div class="photos-collage">
+                <div class="photo-wrapper">
+                    <div class="photo-item">
+                        <img src="1.jpg" alt="Фото из фотобудки">
+                    </div>
+                    <span class="photo-label">Самая маленькая</span>
+                </div>
+                <div class="photo-wrapper">
+                    <div class="photo-item">
+                        <img src="2.jpg" alt="Фотография 2">
+                    </div>
+                    <span class="photo-label">Моя принцесса</span>
+                </div>
+                <div class="photo-wrapper">
+                    <div class="photo-item">
+                        <img src="3.jpg" alt="Выпускное фото">
+                    </div>
+                    <span class="photo-label">Самая сладкая</span>
+                </div>
+                <div class="photo-wrapper">
+                    <div class="photo-item">
+                        <img src="4.jpg" alt="Фото из Instagram">
+                    </div>
+                    <span class="photo-label">Самая милая</span>
+                </div>
+                <div class="photo-wrapper">
+                    <div class="photo-item">
+                        <img src="5.jpg" alt="Завершённое исследование">
+                    </div>
+                    <span class="photo-label">Самая восхетительная</span>
+                </div>
+                <div class="photo-wrapper">
+                    <div class="photo-item">
+                        <img src="6.jpg" alt="Недавние фото">
+                    </div>
+                    <span class="photo-label">Самая моя)</span>
+                </div>
+            </div>
+            <div class="bottom-section">
+                <h3 class="bottom-title">Запечатленные воспоминания</h3>
+                <button class="return-btn" onclick="showPage('page3')">RETURN</button>
+            </div>
+        </div>
+        
+        <!-- Page 5: Flowers Photo -->
+        <div class="page flowers-page" id="page5">
+            <div class="flower-photo-container">
+                <div class="flower-frame">
+                    <img src="flower.JPG" alt="Цветы для любимой">
+                </div>
+            </div>
+            <div class="flower-label-box">
+                <h3>СВЯТОШКИ</h3>
+                <p>ВАШИ ЦВЕТОЧКИ</p>
+            </div>
+            <div class="messages-around">
+                <div class="msg-bubble">Ты прекрасна, как букет только что распустившихся цветов</div>
+                <div class="msg-bubble">Я посылаю любовь и радость в вашу сторону, точно так же, как цветы распространяют свой аромат</div>
+                <div class="msg-bubble">Твое присутствие в моей жизни делает все ярче, точно так же, как цветы распускаются при заботе</div>
+                <div class="msg-bubble">Ты грациозна и нежна, как цветы, танцующие на ветру</div>
+                <div class="msg-bubble">Твоя доброта распространяется повсюду, как аромат цветов весной</div>
+                <div class="msg-bubble">Ты прекрасна, как сад, полный цветов после дождя</div>
+            </div>
+            <div class="bottom-section">
+                <h3 class="bottom-title">Среди всех цветов моя Гюлюм самая прекрасная</h3>
+                <button class="return-btn" onclick="showPage('page3')">RETURN</button>
+            </div>
+        </div>
+        
+        <!-- Page 6: Video -->
+        <div class="page video-page" id="page6">
+            <p class="video-header">наше милимили видео <span>(>‿◕)</span></p>
+            <div class="video-container">
+                <video controls poster="video-poster.jpg">
+                    <source src="video.mp4" type="video/mp4">
+                    Ваш браузер не поддерживает видео тег.
+                </video>
+            </div>
+            <div class="video-info">Для самой восхетительной</div>
+            <div class="secret-msg">вы мой смысл жизни</div>
+            <div class="bottom-section">
+                <h3 class="bottom-title">Самой прекрасной</h3>
+                <button class="return-btn" onclick="showPage('page3')">RETURN</button>
+            </div>
+        </div>
+        
+        <!-- Page 7: Letter -->
+        <div class="page letter-page" id="page7">
+            <div class="letter-content">
+                <h2>Люблю тебя</h2>
+                <p>
+                    Моя жизнь, я благодарен тебе за все что ты сделала и не перестаешь делать для меня, будь со мной рядом всегда. Чтобы я не сделал прошу будь рядом, я не смогу без тебя! Я тебя безумно люблю
+                </p>
+                <p>
+                    Ты делаешь каждый день особенным, просто присутствуя в нем. С тобой я цвету и расцветаю. Ты заслуживаешь всей сладости, всего прекрасного, которые может вместить твое сердце. Извини своего дурачка за все моменты когда обижал тебя. Он никогда не хотел делать этого специально, прости его.
+                </p>
+                <div class="signature">
+                    <p>СО ВСЕЙ ЛЮБОВЬЮ ТВОЙ КОТЁНОК</p>
+                    <p><strong>Для любви всей жизни</strong></p>
+                </div>
+            </div>
+            <div class="bottom-section">
+                <h3 class="bottom-title">Сообщение для принцессы</h3>
+                <button class="return-btn" onclick="showPage('page3')">RETURN</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+        
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            item.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+        
+        document.querySelectorAll('.btn, .return-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                let ripple = document.createElement('span');
+                ripple.style.cssText = `
+                    position: absolute;
+                    width: 20px;
+                    height: 20px;
+                    background: rgba(255,255,255,0.5);
+                    border-radius: 50%;
+                    transform: translate(-50%, -50%);
+                    pointer-events: none;
+                    animation: ripple 0.6s ease-out;
+                `;
+                let rect = this.getBoundingClientRect();
+                ripple.style.left = (e.clientX - rect.left) + 'px';
+                ripple.style.top = (e.clientY - rect.top) + 'px';
+                this.style.position = 'relative';
+                this.style.overflow = 'hidden';
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+        
+        let style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to { width: 200px; height: 200px; opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        document.querySelectorAll('.photo-wrapper').forEach(wrapper => {
+            wrapper.addEventListener('mouseenter', function() {
+                this.querySelector('.photo-item').style.zIndex = 100;
+            });
+            wrapper.addEventListener('mouseleave', function() {
+                setTimeout(() => {
+                    this.querySelector('.photo-item').style.zIndex = '';
+                }, 300);
+            });
+        });
+    </script>
+</body>
+</html>
